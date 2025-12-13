@@ -1,8 +1,12 @@
 package com.techsolutions.productmanager.entity;
 
+import java.math.BigDecimal;
+
 import com.techsolutions.productmanager.domain.ProductStatus;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,23 +23,27 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Campo nome não pode ser vazio ou nulo!")
     private String nome;
 
-    @NotNull
-    @Positive
+    @NotNull(message = "Campo preço não pode ser nulo ou vazio!")
+    @Positive(message = "Campo preço deve ser positivo!")
     @Digits(integer = 5, fraction = 2)
-    private Double preco;
+    private BigDecimal preco;
     
-    @NotBlank
+    @NotBlank(message = "Campo marca não pode ser vazio ou nulo!")
     private String marca;
 
-    @NotBlank
+    @NotBlank(message = "Campo descrição não pode ser vazio ou nulo!")
     private String descricao;
-    
+
+    @Enumerated(EnumType.STRING)
     private ProductStatus status = ProductStatus.ACTIVE;
+
+    public Product () {
+    }
     
-    public Product(Long id, String nome, Double preco, String marca, String descricao) {
+    public Product(Long id, String nome, BigDecimal preco, String marca, String descricao) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -44,7 +52,7 @@ public class Product {
 		this.descricao = descricao;
 	}
     
-    public Product(String nome, Double preco, String marca, String descricao) {
+    public Product(String nome, BigDecimal preco, String marca, String descricao) {
 		super();
 		this.nome = nome;
 		this.preco = preco;
@@ -76,11 +84,11 @@ public class Product {
 		this.nome = nome;
 	}
 
-	public Double getPreco() {
+	public BigDecimal getPreco() {
 		return preco;
 	}
 
-	public void setPreco(Double preco) {
+	public void setPreco(BigDecimal preco) {
 		this.preco = preco;
 	}
 
