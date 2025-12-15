@@ -28,20 +28,33 @@ public class ProductService {
     }
 
     public Product createProduct (Product product) {
-        return productRepository.save(product);
+        if (product.getStatus() == ProductStatus.ACTIVE && product.getId() == null) {
+            return productRepository.save(product);
+        } else {
+            throw new IllegalArgumentException("Produto inválido!");
+        }
     }
     
     public Product updateProduct (Product product) {
-    	return productRepository.save(product);
+        try {
+            if (product.getId() != null && product.getStatus() == ProductStatus.ACTIVE) {
+                findProduct(product.getId());
+                return productRepository.save(product);
+            } else {
+                throw new IllegalArgumentException("Produto inválido!");
+            }
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("Produto não encontrado para atualizar!");
+        }        
     }
     
     public void deleteProduct (Long id) {
     	try {
 			Product product = findProduct(id);
             product.setStatus(ProductStatus.INACTIVE);
-            updateProduct(product);
+            productRepository.save(product);
 		} catch (EntityNotFoundException e) {
-			throw new EntityNotFoundException("Produto não pode ser deletado ou não existe!");
+			throw new EntityNotFoundException("Produto não encontrado para deletar!");
 		}
     }
 

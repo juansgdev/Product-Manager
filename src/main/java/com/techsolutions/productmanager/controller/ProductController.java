@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,9 +20,11 @@ import com.techsolutions.productmanager.record.product.ProductPutResponse;
 import com.techsolutions.productmanager.service.ProductService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/products")
+@Validated
 public class ProductController {
     private ProductService productService;
 
@@ -35,13 +38,16 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public Product getProduct (@PathVariable("id") Long id) {
+    public Product getProduct (@PathVariable("id") @Positive(message = "Parametro via url inválido!") Long id) {
         return productService.findProduct(id);
     }
 
     @PostMapping
-    public ProductPostResponse createProduct (@Valid @RequestBody Product product) {
-        return new ProductPostResponse(productService.createProduct(product));
+    public ResponseEntity<ProductPostResponse> createProduct (@Valid @RequestBody Product product) {
+        ProductPostResponse newProduct = new ProductPostResponse(productService.createProduct(product));
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(newProduct);
     }
 
     @PutMapping
@@ -50,7 +56,7 @@ public class ProductController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteProduct (@PathVariable Long id) {
+    public ResponseEntity<String> deleteProduct (@PathVariable @Positive(message = "Parametro via url inválido!") Long id) {
         productService.deleteProduct(id);
         return ResponseEntity
             .status(HttpStatus.OK)

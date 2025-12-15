@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "products")
@@ -24,6 +25,7 @@ public class Product {
     private Long id;
 
     @NotBlank(message = "Campo nome não pode ser vazio ou nulo!")
+    @Size(min = 2, max = 50, message = "Campo nome deve ter entre 2 e 50 caracteres!")
     private String nome;
 
     @NotNull(message = "Campo preço não pode ser nulo ou vazio!")
@@ -32,9 +34,11 @@ public class Product {
     private BigDecimal preco;
     
     @NotBlank(message = "Campo marca não pode ser vazio ou nulo!")
+    @Size(min = 2, max = 50, message = "Campo marca deve ter entre 2 e 50 caracteres!")
     private String marca;
 
     @NotBlank(message = "Campo descrição não pode ser vazio ou nulo!")
+    @Size(min = 15, max = 300, message = "Campo descrição deve ter entre 15 e 300 caracteres!")
     private String descricao;
 
     @Enumerated(EnumType.STRING)
