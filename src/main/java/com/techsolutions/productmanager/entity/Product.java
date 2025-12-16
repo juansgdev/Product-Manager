@@ -2,6 +2,7 @@ package com.techsolutions.productmanager.entity;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.techsolutions.productmanager.domain.ProductStatus;
 
 import jakarta.persistence.Entity;
@@ -19,6 +20,14 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "products")
+@JsonPropertyOrder({
+    "id",
+    "nome",
+	"preco",
+	"marca",
+    "descricao",
+    "status"
+})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

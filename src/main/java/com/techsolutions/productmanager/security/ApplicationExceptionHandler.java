@@ -2,6 +2,8 @@ package com.techsolutions.productmanager.security;
 
 import java.util.List;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException; 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import com.techsolutions.productmanager.record.error.ApiError;
+
 import jakarta.persistence.EntityNotFoundException;
 import tools.jackson.databind.exc.UnrecognizedPropertyException;
 
@@ -21,42 +25,42 @@ import tools.jackson.databind.exc.UnrecognizedPropertyException;
 public class ApplicationExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    private ResponseEntity<String> notFound (EntityNotFoundException e) {
+    private ResponseEntity<ApiError> notFound (EntityNotFoundException e) {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
-            .body(e.getMessage());
+            .body(ApiError.of(e.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class) 
-    private ResponseEntity<String> illegalArgument (IllegalArgumentException e) {
+    private ResponseEntity<ApiError> illegalArgument (IllegalArgumentException e) {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(e.getMessage());
+            .body(ApiError.of(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    private ResponseEntity<String> typeMismatch () {
+    private ResponseEntity<ApiError> typeMismatch () {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body("Parâmetro via url inválido!");
+            .body(ApiError.of("Parâmetro via url inválido!"));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    private ResponseEntity<String> messageNotReadable () {
+    private ResponseEntity<ApiError> messageNotReadable () {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body("Corpo inválido!");
+            .body(ApiError.of("Corpo inválido!"));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    private ResponseEntity<String> noResourceFound () {
+    private ResponseEntity<ApiError> noResourceFound () {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
-            .body("Recurso não existente, requisição inválida!");
+            .body(ApiError.of("Recurso não existente, requisição inválida!"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<List<String>> argumentNotValid (MethodArgumentNotValidException e) {
+    private ResponseEntity<ApiError> argumentNotValid (MethodArgumentNotValidException e) {
         List<String> errors = e.getBindingResult()
             .getFieldErrors()
             .stream()
@@ -65,35 +69,48 @@ public class ApplicationExceptionHandler {
 
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(errors);
+            .body(ApiError.of(errors));
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    private ResponseEntity<String> mediaTypeNorSupported () {
+    private ResponseEntity<ApiError> mediaTypeNorSupported () {
         return ResponseEntity
             .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-            .body("Tipo de mídia não suportado!");
+            .body(ApiError.of("Tipo de mídia não suportado!"));
     }
     
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    private ResponseEntity<String> requestMethodNotSupported () {
+    private ResponseEntity<ApiError> requestMethodNotSupported () {
         return ResponseEntity
             .status(HttpStatus.METHOD_NOT_ALLOWED)
-            .body("Método não suportado!");
+            .body(ApiError.of("Método não suportado!"));
     }
 
     @ExceptionHandler(UnrecognizedPropertyException.class)
-    private ResponseEntity<String> unrecognizedProperty () {
+    private ResponseEntity<ApiError> unrecognizedProperty () {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body("Corpo com propriedade desconhecida!");
+            .body(ApiError.of("Corpo com propriedade desconhecida!"));
     }
 
     @ExceptionHandler(Exception.class)
-    private ResponseEntity<String> genericException () {
+    private ResponseEntity<ApiError> genericException () {
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body("Erro interno de servidor!");
+            .body(ApiError.of("Erro interno de servidor!"));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    private ResponseEntity<ApiError> constraintViolation (ConstraintViolationException e) {
+        
+        List<String> errors = e.getConstraintViolations()
+        .stream()
+        .map(ConstraintViolation::getMessage)
+        .toList();
+
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiError.of(errors));
     }
 
 }

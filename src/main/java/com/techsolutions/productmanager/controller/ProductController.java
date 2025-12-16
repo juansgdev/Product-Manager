@@ -20,7 +20,9 @@ import com.techsolutions.productmanager.record.product.ProductPutResponse;
 import com.techsolutions.productmanager.service.ProductService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 @RestController
 @RequestMapping("/products")
@@ -40,6 +42,30 @@ public class ProductController {
     @GetMapping("{id}")
     public Product getProduct (@PathVariable("id") @Positive(message = "Parametro via url inválido!") Long id) {
         return productService.findProduct(id);
+    }
+
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<List<Product>> searchProductByName (
+        @PathVariable("nome")
+        @NotBlank(message = "Escreva um nome para buscar!")
+        @Size(min = 2, max = 50, message = "Nome para busca deve ter entre 2 e 50 caracteres!")
+        String nome
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(productService.searchByName(nome));
+    }
+
+    @GetMapping("/marca/{marca}")
+    public ResponseEntity<List<Product>> searchProductByBrand (
+        @PathVariable("marca")
+        @NotBlank(message = "Escreva um marca para buscar!")
+        @Size(min = 2, max = 50, message = "Marca para busca deve ter entre 2 e 50 caracteres!")
+        String marca
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(productService.searchByMarca(marca));
     }
 
     @PostMapping

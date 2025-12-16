@@ -27,6 +27,18 @@ public class ProductService {
             .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
     }
 
+    public List<Product> searchByName (String nome) {
+        List<Product> search = productRepository.findByNomeContainingIgnoreCaseAndStatus(nome, ProductStatus.ACTIVE);
+        if (search.size() < 1) {throw new EntityNotFoundException("Nenhuma correspondência para: " + nome);}
+        return search;
+    }
+
+    public List<Product> searchByMarca (String marca) {
+        List<Product> search = productRepository.findByMarcaContainingIgnoreCaseAndStatus(marca, ProductStatus.ACTIVE);
+        if (search.size() < 1) {throw new EntityNotFoundException("Nenhuma correspondência para: " + marca);}
+        return search;
+    }
+
     public Product createProduct (Product product) {
         if (product.getStatus() == ProductStatus.ACTIVE && product.getId() == null) {
             return productRepository.save(product);
