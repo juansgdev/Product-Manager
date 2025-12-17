@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techsolutions.productmanager.entity.Product;
+import com.techsolutions.productmanager.record.product.ProductDeleteResponse;
 import com.techsolutions.productmanager.record.product.ProductPostResponse;
 import com.techsolutions.productmanager.record.product.ProductPutResponse;
 import com.techsolutions.productmanager.service.ProductService;
@@ -82,11 +83,12 @@ public class ProductController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteProduct (@PathVariable @Positive(message = "Parametro via url inválido!") Long id) {
+    public ResponseEntity<ProductDeleteResponse> deleteProduct (@PathVariable @Positive(message = "Parametro via url inválido!") Long id) {
         productService.deleteProduct(id);
+        ProductDeleteResponse response = new ProductDeleteResponse();
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body("Produto removido com sucesso!");
+            .body(response);
     }
 
 }

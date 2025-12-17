@@ -45,18 +45,24 @@ public class ApplicationExceptionHandler {
             .body(ApiError.of("Parâmetro via url inválido!"));
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    private ResponseEntity<ApiError> constraintViolation (ConstraintViolationException e) {
+        
+        List<String> errors = e.getConstraintViolations()
+        .stream()
+        .map(ConstraintViolation::getMessage)
+        .toList();
+
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiError.of(errors));
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     private ResponseEntity<ApiError> messageNotReadable () {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(ApiError.of("Corpo inválido!"));
-    }
-
-    @ExceptionHandler(NoResourceFoundException.class)
-    private ResponseEntity<ApiError> noResourceFound () {
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(ApiError.of("Recurso não existente, requisição inválida!"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -70,6 +76,21 @@ public class ApplicationExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(ApiError.of(errors));
+    }
+
+    @ExceptionHandler(UnrecognizedPropertyException.class)
+    private ResponseEntity<ApiError> unrecognizedProperty () {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiError.of("Corpo com propriedade desconhecida!"));
+    }
+
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    private ResponseEntity<ApiError> noResourceFound () {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ApiError.of("Recurso não existente, requisição inválida!"));
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
@@ -86,31 +107,11 @@ public class ApplicationExceptionHandler {
             .body(ApiError.of("Método não suportado!"));
     }
 
-    @ExceptionHandler(UnrecognizedPropertyException.class)
-    private ResponseEntity<ApiError> unrecognizedProperty () {
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(ApiError.of("Corpo com propriedade desconhecida!"));
-    }
-
     @ExceptionHandler(Exception.class)
     private ResponseEntity<ApiError> genericException () {
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ApiError.of("Erro interno de servidor!"));
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    private ResponseEntity<ApiError> constraintViolation (ConstraintViolationException e) {
-        
-        List<String> errors = e.getConstraintViolations()
-        .stream()
-        .map(ConstraintViolation::getMessage)
-        .toList();
-
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(ApiError.of(errors));
     }
 
 }

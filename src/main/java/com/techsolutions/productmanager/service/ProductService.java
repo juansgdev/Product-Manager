@@ -40,21 +40,19 @@ public class ProductService {
     }
 
     public Product createProduct (Product product) {
-        if (product.getStatus() == ProductStatus.ACTIVE && product.getId() == null) {
-            return productRepository.save(product);
-        } else {
+        if (product.getStatus() != ProductStatus.ACTIVE && product.getId() != null) {
             throw new IllegalArgumentException("Produto inválido!");
-        }
+        } 
+        return productRepository.save(product);
     }
     
     public Product updateProduct (Product product) {
         try {
-            if (product.getId() != null && product.getStatus() == ProductStatus.ACTIVE) {
-                findProduct(product.getId());
-                return productRepository.save(product);
-            } else {
-                throw new IllegalArgumentException("Produto inválido!");
-            }
+            if (product.getId() == null && product.getStatus() == ProductStatus.INACTIVE) { 
+                throw new IllegalArgumentException("Produto inválido!");  
+            } 
+            findProduct(product.getId());
+            return productRepository.save(product);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("Produto não encontrado para atualizar!");
         }        
