@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.techsolutions.productmanager.domain.ProductStatus;
+import com.techsolutions.productmanager.dto.ProductDTO;
+import com.techsolutions.productmanager.dto.ProductUpdateRequestDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -54,6 +56,21 @@ public class Product {
     private ProductStatus status = ProductStatus.ACTIVE;
 
     public Product () {
+    }
+
+    public Product (ProductDTO newProduct) {
+        this.nome = newProduct.nome();
+        this.preco = newProduct.preco();
+        this.marca = newProduct.marca();
+        this.descricao = newProduct.descricao();
+    }
+
+    public Product (ProductUpdateRequestDTO updatedProduct) {
+        this.id = updatedProduct.id();
+        this.nome = updatedProduct.nome();
+        this.preco = updatedProduct.preco();
+        this.marca = updatedProduct.marca();
+        this.descricao = updatedProduct.descricao();
     }
     
     public Product(Long id, String nome, BigDecimal preco, String marca, String descricao) {

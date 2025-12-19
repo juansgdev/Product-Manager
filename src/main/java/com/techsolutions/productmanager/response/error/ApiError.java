@@ -1,4 +1,4 @@
-package com.techsolutions.productmanager.record.error;
+package com.techsolutions.productmanager.response.error;
 
 import java.util.List;
 

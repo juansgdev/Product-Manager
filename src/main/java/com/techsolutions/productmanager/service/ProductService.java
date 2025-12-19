@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.techsolutions.productmanager.domain.ProductStatus;
+import com.techsolutions.productmanager.dto.ProductDTO;
+import com.techsolutions.productmanager.dto.ProductUpdateRequestDTO;
 import com.techsolutions.productmanager.entity.Product;
 import com.techsolutions.productmanager.repository.ProductRepository;
 
@@ -39,16 +41,18 @@ public class ProductService {
         return search;
     }
 
-    public Product createProduct (Product product) {
-        if (product.getStatus() != ProductStatus.ACTIVE && product.getId() != null) {
+    public Product createProduct (ProductDTO newProduct) {
+        Product product = new Product(newProduct);
+        if (product.getStatus() != ProductStatus.ACTIVE || product.getId() != null) {
             throw new IllegalArgumentException("Produto inválido!");
         } 
         return productRepository.save(product);
     }
     
-    public Product updateProduct (Product product) {
+    public Product updateProduct (ProductUpdateRequestDTO updatedProduct) {
+        Product product =  new Product(updatedProduct);
         try {
-            if (product.getId() == null && product.getStatus() == ProductStatus.INACTIVE) { 
+            if (product.getId() == null || product.getStatus() == ProductStatus.INACTIVE) { 
                 throw new IllegalArgumentException("Produto inválido!");  
             } 
             findProduct(product.getId());
