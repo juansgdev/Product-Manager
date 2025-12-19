@@ -96,6 +96,15 @@ Nesta página encontram-se demais informações sobre a aplicação, bem como ex
 
 </br>
 
+# Soft Delete
+
+Ao iniciar a aplicação, a migration V3 é acionada e cria-se a view que retorna os produtos que foram deletados:
+```
+select * from vw_removed_products;
+```
+
+</br>
+
 # Sobre
 
 Este projeto foi desenvolvido pelo usuário juansgdev para a segunda avaliação da matéria de Desenvolvimento de Sistemas da instituição Firjan SENAI Maracanã.
